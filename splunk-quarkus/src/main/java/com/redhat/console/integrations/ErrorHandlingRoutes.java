@@ -45,7 +45,7 @@ public class ErrorHandlingRoutes extends IntegrationsRouteBuilder {
         from(direct("secureConnectionFailed"))
                 .routeId("secureConnectionFailed")
                 .log(LoggingLevel.ERROR, "ProtocolException for event ${header.ce-id} (orgId ${header.orgId}"
-                                         + " account ${header.accountId}) to ${header.targetUrl}: ${exception.message}")
+                                         + " account ${header.accountId}) to ${exchangeProperty.targetUrl}: ${exception.message}")
                 .log(LoggingLevel.DEBUG, "${exception.stacktrace}")
                 .setBody(simple("${exception.message}"))
                 .setHeader("outcome-fail", simple("true"))
@@ -62,7 +62,7 @@ public class ErrorHandlingRoutes extends IntegrationsRouteBuilder {
         from(direct("targetUrlValidationFailed"))
                 .routeId("targetUrlValidationFailed")
                 .log(LoggingLevel.ERROR, "IllegalArgumentException for event ${header.ce-id} (orgId ${header.orgId}"
-                                         + " account ${header.accountId}) to ${header.targetUrl}: ${exception.message}")
+                                         + " account ${header.accountId}) to ${exchangeProperty.targetUrl}: ${exception.message}")
                 .log(LoggingLevel.DEBUG, "${exception.stacktrace}")
                 .setBody(simple("${exception.message}"))
                 .setHeader("outcome-fail", simple("true"))
@@ -79,7 +79,7 @@ public class ErrorHandlingRoutes extends IntegrationsRouteBuilder {
         from(direct("ioFailed"))
                 .routeId("ioFailed")
                 .log(LoggingLevel.ERROR, "IOFailure for event ${header.ce-id} (orgId ${header.orgId}"
-                                         + " account ${header.accountId}) to ${header.targetUrl}: ${exception.message}")
+                                         + " account ${header.accountId}) to ${exchangeProperty.targetUrl}: ${exception.message}")
                 .log(LoggingLevel.DEBUG, "${exception.stacktrace}")
                 .setBody(simple("${exception.message}"))
                 .setHeader("outcome-fail", simple("true"))
@@ -96,7 +96,7 @@ public class ErrorHandlingRoutes extends IntegrationsRouteBuilder {
         from(direct("httpFailed"))
                 .routeId("httpFailed")
                 .log(LoggingLevel.ERROR, "HTTPFailure for event ${header.ce-id} (orgId ${header.orgId} account"
-                                         + " ${header.accountId}) to ${header.targetUrl}: ${exception.getStatusCode()}"
+                                         + " ${header.accountId}) to ${exchangeProperty.targetUrl}: ${exception.getStatusCode()}"
                                          + " ${exception.getStatusText()}: ${exception.message}")
                 .log(LoggingLevel.DEBUG, "Response Body: ${exception.getResponseBody()}")
                 .log(LoggingLevel.DEBUG, "Response Headers: ${exception.getResponseHeaders()}")

@@ -17,10 +17,10 @@ public class ResultTransformer implements Processor {
         Message in = exchange.getIn();
         String oldBody = in.getBody(String.class);
 
-        Object timeHeader = in.getHeader("timeIn");
+        Object timeInProperty = exchange.getProperty("timeIn");
         long timeIn;
-        if (timeHeader != null) {
-            timeIn = Long.parseLong((String) timeHeader); // TODO use header("kafka.TIMESTAMP") ?
+        if (timeInProperty != null) {
+            timeIn = Long.parseLong((String) timeInProperty); // TODO use header("kafka.TIMESTAMP") ?
         } else {
             timeIn = System.currentTimeMillis();
         }
@@ -33,7 +33,7 @@ public class ResultTransformer implements Processor {
         out.put("finishTime", System.currentTimeMillis());
         out.put("duration", timeDiff);
         Map<String, String> details = new HashMap<>();
-        details.put("target", (String) in.getHeader("targetUrl"));
+        details.put("target", (String) exchange.getProperty("targetUrl"));
         details.put("type", (String) in.getHeader("Ce-type"));
         out.put("details", details);
 

@@ -106,6 +106,14 @@
             <artifactId>camel-quarkus-log</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel.quarkus</groupId>
+            <artifactId>camel-quarkus-splunk-hec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel.quarkus</groupId>
+            <artifactId>camel-quarkus-rest</artifactId>
+        </dependency>
+        <dependency>
           <groupId>commons-validator</groupId>
           <artifactId>commons-validator</artifactId>
           <version>1.7</version>

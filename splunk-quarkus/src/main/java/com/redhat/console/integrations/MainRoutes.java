@@ -4,8 +4,6 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
@@ -78,7 +76,7 @@ public class MainRoutes extends IntegrationsRouteBuilder {
         from(direct("success"))
                 .routeId("success")
                 .log("Delivered event ${header.ce-id} (orgId ${header.orgId} account ${header.accountId})"
-                     + " to ${header.targetUrl}")
+                     + " to ${exchangeProperty.targetUrl}")
                 .setBody(simple("Success: Event ${header.ce-id} sent successfully"))
                 .setHeader("outcome-fail", simple("false"))
                 .process(resultTransformer)

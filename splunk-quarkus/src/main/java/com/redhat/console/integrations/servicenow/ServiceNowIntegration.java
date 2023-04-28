@@ -47,7 +47,7 @@ public class ServiceNowIntegration extends IntegrationsRouteBuilder {
         @Override
         protected void initialize() {
             setLowerCase(true);
-            setFilterOnMatch​(false); // reverse filtering to only accept selected
+            setFilterOnMatch(false); // reverse filtering to only accept selected
 
             getInFilter().clear();
             getOutFilter().clear();
@@ -67,8 +67,8 @@ public class ServiceNowIntegration extends IntegrationsRouteBuilder {
                 .routeId("handler")
 
                 //Add headers useful for error reporting and metrics
-                .setHeader("targetUrl", simple("${headers.metadata[url]}"))
-                .setHeader("timeIn", simpleF("%d", System.currentTimeMillis()))
+                .setProperty("targetUrl", simple("${headers.metadata[url]}"))
+                .setProperty("timeIn", simpleF("%d", System.currentTimeMillis()))
 
                 // body is a JsonObject so converting to consumable object
                 // for the http producer
