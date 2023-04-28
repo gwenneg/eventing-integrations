@@ -38,13 +38,17 @@ public class EventsSplitter implements Processor {
                 oneBody.put("events", arr);
 
                 JsonObject result = new JsonObject();
-                result.put("event", oneBody.toJson());
-
+                result.put("event", oneBody);
                 futures.add(result.toJson());
+
+                //futures.add(oneBody.toJson());
+                //.put("source", "eventing");
+                //result.put("sourcetype", "Insights event");
+
             }
         }
 
-        in.setBody(String.join("", futures));
+        in.setBody(String.join(" ", futures));
 
         System.out.println(in.getBody(String.class));
 

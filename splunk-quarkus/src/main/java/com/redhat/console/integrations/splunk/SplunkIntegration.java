@@ -65,7 +65,6 @@ public class SplunkIntegration extends IntegrationsRouteBuilder {
                 .to("direct:handler");
 
         from(direct("handler"))
-                .removeHeaders("*")
                 .process(new CloudEventDecoder())
                 .routeId("handler")
                 .setProperty("targetUrl", simple("${headers.metadata[url]}"))
@@ -77,8 +76,11 @@ public class SplunkIntegration extends IntegrationsRouteBuilder {
                 //.setProperty("skipTlsVerify", simple("${headers.metadata[trustAll] != null and headers.metadata[trustAll] == 'true'}"))
                 //.process(new TargetUrlValidator()) // validate the TargetUrl to be a proper url
                 .process(eventsSplitter)
+                .removeHeaders("*")
+                .log("${headers}")
+                .log("${body}")
                 //.toD("splunk-hec:${exchangeProperty.targetUrl}/${exchangeProperty.token}?skipTlsVerify=${exchangeProperty.skipTlsVerify}&bodyOnly=true&source=${exchangeProperty.source}&sourcetype=${exchangeProperty.sourcetype}", 100)
-                .toD("splunk-hec:${exchangeProperty.targetUrl}/${exchangeProperty.token}?skipTlsVerify=${exchangeProperty.skipTlsVerify}&source=${exchangeProperty.source}&sourcetype=${exchangeProperty.sourcetype}&index=redhatinsights", 100)
+                .toD("splunk-hec:${exchangeProperty.targetUrl}/${exchangeProperty.token}?skipTlsVerify=${exchangeProperty.skipTlsVerify}&bodyOnly=true&source=${exchangeProperty.source}&sourcetype=${exchangeProperty.sourcetype}&index=redhatinsights&host=${exchangeProperty.targetUrl}", 100)
                 .to(direct("success"));
     }
 }
