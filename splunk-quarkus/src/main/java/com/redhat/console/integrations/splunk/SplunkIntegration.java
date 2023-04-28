@@ -17,29 +17,21 @@
 package com.redhat.console.integrations.splunk;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.context.ApplicationScoped;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.http.common.HttpHeaderFilterStrategy;
-import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.ProtocolException;
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import com.redhat.console.integrations.IntegrationsRouteBuilder;
 import com.redhat.console.integrations.TargetUrlValidator;
-import com.redhat.console.integrations.EventAppender;
-import com.redhat.console.integrations.EventPicker;
 
 /**
  * The main class that does the work setting up the Camel routes. Entry point for messages is below
@@ -76,8 +68,7 @@ public class SplunkIntegration extends IntegrationsRouteBuilder {
         configureHandler();
     }
 
-    private void configureHandler() throws Exception {
-        Processor eventPicker = new EventPicker();
+    private void configureHandler() {
         // Receive messages on internal enpoint (within the same JVM)
         // named "splunk".
         from(direct("handler"))
@@ -94,30 +85,13 @@ public class SplunkIntegration extends IntegrationsRouteBuilder {
                 .setHeader("targetUrl", simple("${headers.metadata[url]}"))
                 .setHeader("timeIn", simpleF("%d", System.currentTimeMillis()))
 
+                .process(new TargetUrlValidator()) // validate the TargetUrl to be a proper url
+
                 //Set Authorization header
                 .setHeader("Authorization", simpleF("Splunk %s", "${headers.metadata[X-Insight-Token]}"))
 
-                // body is a JsonObject so converting to consumable object
-                // for the http producer
-                .marshal().json(JsonLibrary.Jackson)
-
-                .setProperty("eventsCount", jsonpath("$.events.length()"))
-
-                // loops over events in the original message
-                .loop(exchangeProperty("eventsCount")).copy()
-                // picks one Event from the original message
-                .process(eventPicker)
-
-                // Transform message to add splunk wrapper to the json
-                .transform().simple("{\"source\": \"eventing\", \"sourcetype\": \"Insights event\", \"event\": ${body}}")
-
-                // aggregate transformed messages and append them together
-                // aggregate by "metadata" header as it contains data unique per target splunk instance
-                .aggregate(header("metadata"), new EventAppender())
-                // use default of 10 threads to process aggregated records (that act as queue)
-                .parallelProcessing(true)
-                .completionSize(exchangeProperty("eventsCount"))
-                .process(new TargetUrlValidator()) // validate the TargetUrl to be a proper url
+                // See the EventsSplitter Javadoc and comments.
+                .process(new EventsSplitter())
 
                 // Redirect depending on http or https (different default ports) so that it goes to the default splunk port
                 // Send the message to Splunk's HEC as a splunk formattted event.
