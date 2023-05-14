@@ -17,6 +17,8 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
 
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
 public class CloudEventTestHelper {
     /**
      * Cloud event's top level fields.
@@ -167,7 +169,8 @@ public class CloudEventTestHelper {
                 "the 'application' field of the action has an unexpected value");
         Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_EVENT_TYPE, event.getString("event_type"),
                 "the 'event_type' field of the action has an unexpected value");
-        Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_TIMESTAMP.toString(), event.getString("timestamp"),
+        Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_TIMESTAMP.format(ISO_LOCAL_DATE_TIME),
+                event.getString("timestamp"),
                 "the 'timestamp' field of the action has an unexpected value");
         Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_ORG_ID, event.getString("org_id"),
                 "the 'org_id' field of the action has an unexpected value");
@@ -216,7 +219,8 @@ public class CloudEventTestHelper {
                 "the 'application' field of the action has an unexpected value");
         Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_EVENT_TYPE, innerEvent.getString("event_type"),
                 "the 'event_type' field of the action has an unexpected value");
-        Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_TIMESTAMP.toString(), innerEvent.getString("timestamp"),
+        Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_TIMESTAMP.format(ISO_LOCAL_DATE_TIME),
+                innerEvent.getString("timestamp"),
                 "the 'timestamp' field of the action has an unexpected value");
         Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_ORG_ID, innerEvent.getString("org_id"),
                 "the 'org_id' field of the action has an unexpected value");
