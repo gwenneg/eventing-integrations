@@ -19,12 +19,11 @@ package com.redhat.console.integrations.servicenow;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import com.redhat.console.integrations.BasicAuthenticationProcessor;
 import com.redhat.console.integrations.IntegrationsRouteBuilder;
 import com.redhat.console.integrations.TargetUrlValidator;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.http.base.HttpOperationFailedException;
@@ -89,8 +88,8 @@ public class ServiceNowIntegration extends IntegrationsRouteBuilder {
         from(seda("push").concurrentConsumers(10))
             .to(https("dynamic")
                 .httpMethod("POST")
-                .headerFilterStrategy(new ServiceNowHttpHeaderStrategy())
                 .advanced()
+                .headerFilterStrategy(new ServiceNowHttpHeaderStrategy())
                 .httpClientConfigurer(getClientConfigurer()))
             .to(direct("success"));
     }

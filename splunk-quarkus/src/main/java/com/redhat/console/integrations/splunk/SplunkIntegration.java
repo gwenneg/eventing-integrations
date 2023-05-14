@@ -17,12 +17,14 @@
 package com.redhat.console.integrations.splunk;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
-import javax.enterprise.context.ApplicationScoped;
-
+import com.redhat.console.integrations.EventAppender;
+import com.redhat.console.integrations.EventPicker;
+import com.redhat.console.integrations.IntegrationsRouteBuilder;
+import com.redhat.console.integrations.TargetUrlValidator;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http.HttpClientConfigurer;
@@ -32,14 +34,6 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.ProtocolException;
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-
-import com.redhat.console.integrations.IntegrationsRouteBuilder;
-import com.redhat.console.integrations.TargetUrlValidator;
-import com.redhat.console.integrations.EventAppender;
-import com.redhat.console.integrations.EventPicker;
 
 /**
  * The main class that does the work setting up the Camel routes. Entry point for messages is below
@@ -132,15 +126,15 @@ public class SplunkIntegration extends IntegrationsRouteBuilder {
                         .sslContextParameters(getTrustAllCACerts())
                         .x509HostnameVerifier(NoopHostnameVerifier.INSTANCE)
                         .httpMethod("POST")
-                        .headerFilterStrategy(new SplunkHttpHeaderStrategy())
                         .advanced()
+                        .headerFilterStrategy(new SplunkHttpHeaderStrategy())
                         .httpClientConfigurer(getClientConfigurer()))
                 .endChoice()
                 .otherwise()
                 .to(https("dynamic")
                         .httpMethod("POST")
-                        .headerFilterStrategy(new SplunkHttpHeaderStrategy())
                         .advanced()
+                        .headerFilterStrategy(new SplunkHttpHeaderStrategy())
                         .httpClientConfigurer(getClientConfigurer()))
                 .endChoice()
                 .end()

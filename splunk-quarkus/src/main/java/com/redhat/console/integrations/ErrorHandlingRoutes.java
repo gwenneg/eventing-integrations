@@ -16,8 +16,7 @@
  */
 package com.redhat.console.integrations;
 
-import javax.enterprise.context.ApplicationScoped;
-
+import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 

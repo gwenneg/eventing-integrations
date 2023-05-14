@@ -17,6 +17,8 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
 
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
 public class CloudEventTestHelper {
     /**
      * Cloud event's top level fields.
@@ -68,7 +70,7 @@ public class CloudEventTestHelper {
 
     /**
      * Builds a test cloud event.
-     * 
+     *
      * @return           the generated cloud event.
      * @throws Exception if any unexpected error occurs.
      */
@@ -167,7 +169,8 @@ public class CloudEventTestHelper {
                 "the 'application' field of the action has an unexpected value");
         Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_EVENT_TYPE, event.getString("event_type"),
                 "the 'event_type' field of the action has an unexpected value");
-        Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_TIMESTAMP.toString(), event.getString("timestamp"),
+        Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_TIMESTAMP.format(ISO_LOCAL_DATE_TIME),
+                event.getString("timestamp"),
                 "the 'timestamp' field of the action has an unexpected value");
         Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_ORG_ID, event.getString("org_id"),
                 "the 'org_id' field of the action has an unexpected value");
@@ -196,7 +199,7 @@ public class CloudEventTestHelper {
      * Asserts that the given Splunk payload is generated from the data that was generated in
      * {@link #buildTestCloudEvent()}. The "events" array is not validated since that part is different for every Splunk
      * payload.
-     * 
+     *
      * @param event the event to evaluate.
      */
     public static void assertSplunkPayloadIsTheExpectedOne(final JsonObject event) {
@@ -216,7 +219,8 @@ public class CloudEventTestHelper {
                 "the 'application' field of the action has an unexpected value");
         Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_EVENT_TYPE, innerEvent.getString("event_type"),
                 "the 'event_type' field of the action has an unexpected value");
-        Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_TIMESTAMP.toString(), innerEvent.getString("timestamp"),
+        Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_TIMESTAMP.format(ISO_LOCAL_DATE_TIME),
+                innerEvent.getString("timestamp"),
                 "the 'timestamp' field of the action has an unexpected value");
         Assertions.assertEquals(CloudEventTestHelper.TEST_ACTION_ORG_ID, innerEvent.getString("org_id"),
                 "the 'org_id' field of the action has an unexpected value");
@@ -229,7 +233,7 @@ public class CloudEventTestHelper {
 
     /**
      * Asserts that the received body contains the specified expected message in the "outcome" field.
-     * 
+     *
      * @param receivedBody    the received body from Apache Camel.
      * @param expectedMessage the expected message to find in the "outcome" field of the body.
      */
